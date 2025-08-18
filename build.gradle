@@ -33,6 +33,10 @@ dependencies {
 	// Database
 	runtimeOnly 'org.postgresql:postgresql'
 	runtimeOnly 'org.springframework.boot:spring-boot-docker-compose'
+
+	// Flyway for database migrations
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.flywaydb:flyway-database-postgresql'
 }
 
 tasks.named('test') {
