@@ -1,16 +1,14 @@
 package com.slash.lash.model;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -19,36 +17,39 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
+@Entity
+@Table(name = "artist_songs")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "artists")
-public class ArtistsModel {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private long id;
-
-    @Column(name = "name", nullable = false)
-    private String name;
-
-    @Column(name = "created_at", nullable = false)
+public class ArtistSong {
+    
+    @EmbeddedId
+    private ArtistSongId id;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("artistId")
+    @JoinColumn(name = "artist_id")
+    private ArtistsModel artist;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("songId")
+    @JoinColumn(name = "song_id")
+    private SongsModel song;
+    
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
-
+    
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ArtistSong> artistSongs;
-
+    
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
-
+    
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
